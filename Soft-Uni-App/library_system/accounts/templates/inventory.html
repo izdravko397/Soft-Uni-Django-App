@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Inventory{% endblock %}
+
+{% block content %}
+<h2>Book Inventory</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Published Date</th>
+            <th>ISBN</th>
+            <th>Available</th>
+            {% if user.is_library_manager %}
+            <th>Actions</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for book in books %}
+        <tr>
+            <td>{{ book.title }}</td>
+            <td>{{ book.author }}</td>
+            <td>{{ book.published_date }}</td>
+            <td>{{ book.isbn }}</td>
+            <td>{{ book.available }}</td>
+            {% if user.is_library_manager %}
+            <td>
+                <a href="{% url 'book_update' book.pk %}">Edit</a>
+                <a href="{% url 'book_delete' book.pk %}">Delete</a>
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% if user.is_library_manager %}
+<a href="{% url 'book_create' %}" class="btn btn-primary">Add New Book</a>
+{% endif %}
+{% endblock %}
