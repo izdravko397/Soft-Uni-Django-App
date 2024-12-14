@@ -21,6 +21,14 @@
     <li>
         {{ book.title }} by {{ book.author }}
         <a href="{% url 'book_detail' book.pk %}" class="btn btn-secondary">Add Comment</a>
+        {% if book.available %}
+            <span>(read and returned)</span>
+        {% else %}
+            <form action="{% url 'book_return' book.pk %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-warning">Return Book</button>
+            </form>
+        {% endif %}
     </li>
     {% empty %}
     <li>No books booked yet.</li>

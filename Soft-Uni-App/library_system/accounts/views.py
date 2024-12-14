@@ -6,33 +6,47 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Book, Profile, Comment
 from .forms import BookForm, CommentForm
+from django.views import View
+from django.views.generic import TemplateView, ListView, CreateView, DetailView
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-def register(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('login')
-    else:
-        form = CustomUserCreationForm()
-    return render(request, 'register.html', {'form': form})
 
-def login_view(request):
-    if request.method == 'POST':
-        form = CustomAuthenticationForm(request, data=request.POST)
+def index_view(request):
+    return render(request, 'index.html')
+
+class RegisterView(CreateView):
+    form_class = CustomUserCreationForm
+    template_name = 'register.html'
+    success_url = reverse_lazy('login')
+
+class LoginView(View):
+    form_class = CustomAuthenticationForm
+    template_name = 'login.html'
+
+    def get(self, request):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = self.form_class(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
             return redirect('home')
-    else:
-        form = CustomAuthenticationForm()
-    return render(request, 'login.html', {'form': form})
+        return render(request, self.template_name, {'form': form})
 
-@login_required
-def home(request):
-    books = Book.objects.all()
-    user_books = request.user.profile.books.all() if hasattr(request.user, 'profile') else []
-    return render(request, 'home.html', {'books': books, 'user_books': user_books})
+
+
+class HomeView(LoginRequiredMixin, TemplateView):
+    template_name = 'home.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['books'] = Book.objects.all()
+        context['user_books'] = self.request.user.profile.books.all() if hasattr(self.request.user, 'profile') else []
+        return context
+
 
 @login_required
 def profile(request):
@@ -43,10 +57,10 @@ def logout_view(request):
     return redirect('home')
 
 
-@login_required
-def book_list(request):
-    books = Book.objects.all()
-    return render(request, 'inventory.html', {'books': books})
+class BookListView(LoginRequiredMixin, ListView):
+    model = Book
+    template_name = 'inventory.html'
+    context_object_name = 'books'
 
 @login_required
 def book_create(request):
@@ -98,18 +112,35 @@ def book_book(request, pk):
     return redirect('home')
 
 
-@login_required
-def book_detail(request, pk):
-    book = get_object_or_404(Book, pk=pk)
-    comments = book.comments.all()
-    if request.method == 'POST':
+class BookDetailView(LoginRequiredMixin, DetailView):
+    model = Book
+    template_name = 'book_detail.html'
+    context_object_name = 'book'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comments'] = self.object.comments.all()
+        context['form'] = CommentForm()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
             comment.user = request.user
-            comment.book = book
+            comment.book = self.object
             comment.save()
-            return redirect('book_detail', pk=book.pk)
-    else:
-        form = CommentForm()
-    return render(request, 'book_detail.html', {'book': book, 'comments': comments, 'form': form})
+            return redirect('book_detail', pk=self.object.pk)
+        return self.render_to_response(self.get_context_data(form=form))
+
+@login_required
+def book_return(request, pk):
+    book = get_object_or_404(Book, pk=pk)
+    if request.method == 'POST':
+        # Logic to mark the book as returned
+        book.available = True
+        book.save()
+        # Optionally, remove the book from the user's profile if needed
+        # request.user.profile.books.remove(book)
+    return redirect('profile')

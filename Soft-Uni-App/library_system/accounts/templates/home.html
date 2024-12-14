@@ -35,7 +35,7 @@
                     {{ form.as_p }}
                     <button type="submit" class="btn btn-primary mt-2">Submit</button>
                 </form>
-                {% else %}
+                {% endif %}
                 {% if book.available %}
                 <form method="post" action="{% url 'book_book' book.pk %}">
                     {% csrf_token %}
@@ -43,7 +43,6 @@
                 </form>
                 {% else %}
                 <h4>Unavailable</h4>
-                {% endif %}
                 {% endif %}
             </div>
         </div>
