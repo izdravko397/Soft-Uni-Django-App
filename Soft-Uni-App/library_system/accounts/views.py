@@ -4,8 +4,8 @@ from django.contrib.auth.decorators import login_required
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Book, Profile
-from .forms import BookForm
+from .models import Book, Profile, Comment
+from .forms import BookForm, CommentForm
 
 def register(request):
     if request.method == 'POST':
@@ -31,7 +31,8 @@ def login_view(request):
 @login_required
 def home(request):
     books = Book.objects.all()
-    return render(request, 'home.html', {'books': books})
+    user_books = request.user.profile.books.all() if hasattr(request.user, 'profile') else []
+    return render(request, 'home.html', {'books': books, 'user_books': user_books})
 
 @login_required
 def profile(request):
@@ -95,3 +96,20 @@ def book_book(request, pk):
         profile, created = Profile.objects.get_or_create(user=request.user)
         profile.books.add(book)
     return redirect('home')
+
+
+@login_required
+def book_detail(request, pk):
+    book = get_object_or_404(Book, pk=pk)
+    comments = book.comments.all()
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.book = book
+            comment.save()
+            return redirect('book_detail', pk=book.pk)
+    else:
+        form = CommentForm()
+    return render(request, 'book_detail.html', {'book': book, 'comments': comments, 'form': form})

@@ -23,3 +23,14 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class Comment(models.Model):
+    book = models.ForeignKey(Book, related_name='comments', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    text = models.TextField()
+    rating = models.PositiveIntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Comment by {self.user.username} on {self.book.title}'

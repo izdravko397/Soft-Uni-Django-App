@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block content %}
+<h2>{{ book.title }}</h2>
+<p>Author: {{ book.author }}</p>
+<p>Published Date: {{ book.published_date }}</p>
+<p>ISBN: {{ book.isbn }}</p>
+
+<h3>Comments</h3>
+<ul>
+    {% for comment in comments %}
+    <li>
+        <strong>{{ comment.user.username }}</strong> rated {{ comment.rating }}/5
+        <p>{{ comment.text }}</p>
+        <small>Posted on {{ comment.created_at }}</small>
+    </li>
+    {% empty %}
+    <li>No comments yet.</li>
+    {% endfor %}
+</ul>
+
+<h3>Add a Comment</h3>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock %}

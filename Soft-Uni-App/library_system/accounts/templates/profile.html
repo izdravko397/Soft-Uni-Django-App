@@ -18,7 +18,10 @@
 <h3>Booked Books</h3>
 <ul>
     {% for book in user.profile.books.all %}
-    <li>{{ book.title }} by {{ book.author }}</li>
+    <li>
+        {{ book.title }} by {{ book.author }}
+        <a href="{% url 'book_detail' book.pk %}" class="btn btn-secondary">Add Comment</a>
+    </li>
     {% empty %}
     <li>No books booked yet.</li>
     {% endfor %}
