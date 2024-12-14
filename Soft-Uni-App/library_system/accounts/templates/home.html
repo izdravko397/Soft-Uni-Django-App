@@ -3,50 +3,58 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h2 class="my-4">Welcome to the Library System</h2>
+<div class="container mt-5">
+    <h2 class="my-4 text-primary">Welcome to the Library</h2>
 
-<div class="row">
-    {% for book in books %}
-    <div class="col-md-4 mb-4">
-        <div class="card">
-            <div class="card-body">
-                <h3 class="card-title">{{ book.title }}</h3>
-                <p class="card-text"><strong>Author:</strong> {{ book.author }}</p>
-                <p class="card-text"><strong>Published Date:</strong> {{ book.published_date }}</p>
-                <p class="card-text"><strong>ISBN:</strong> {{ book.isbn }}</p>
+    <!-- Search Form -->
+    <form method="get" action="{% url 'home' %}" class="form-inline mb-4">
+        <input type="text" name="q" class="form-control mr-2" placeholder="Search books..." value="{{ request.GET.q }}">
+        <button type="submit" class="btn btn-outline-primary">Search</button>
+    </form>
 
-                <h4 class="mt-4">Comments</h4>
-                <ul class="list-group list-group-flush">
-                    {% for comment in book.comments.all %}
-                    <li class="list-group-item">
-                        <strong>{{ comment.user.username }}</strong> rated {{ comment.rating }}/5
-                        <p>{{ comment.text }}</p>
-                        <small>Posted on {{ comment.created_at }}</small>
-                    </li>
-                    {% empty %}
-                    <li class="list-group-item">No comments yet.</li>
-                    {% endfor %}
-                </ul>
+    <div class="row">
+        {% for book in books %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title">{{ book.title }}</h3>
+                    <p class="card-text"><strong>Author:</strong> {{ book.author }}</p>
+                    <p class="card-text"><strong>Published Date:</strong> {{ book.published_date }}</p>
+                    <p class="card-text"><strong>ISBN:</strong> {{ book.isbn }}</p>
 
-                {% if book in user_books %}
-                <h4 class="mt-4">Add a Comment</h4>
-                <form method="post" action="{% url 'book_detail' book.pk %}">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <button type="submit" class="btn btn-primary mt-2">Submit</button>
-                </form>
-                {% endif %}
-                {% if book.available %}
-                <form method="post" action="{% url 'book_book' book.pk %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-success mt-2">Book</button>
-                </form>
-                {% else %}
-                <h4>Unavailable</h4>
-                {% endif %}
+                    <h4 class="mt-4">Comments</h4>
+                    <ul class="list-group list-group-flush">
+                        {% for comment in book.comments.all %}
+                        <li class="list-group-item">
+                            <strong>{{ comment.user.username }}</strong> rated {{ comment.rating }}/5
+                            <p>{{ comment.text }}</p>
+                            <small>Posted on {{ comment.created_at }}</small>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item">No comments yet.</li>
+                        {% endfor %}
+                    </ul>
+
+                    {% if book in user_books %}
+                    <h4 class="mt-4">Add a Comment</h4>
+                    <form method="post" action="{% url 'book_detail' book.pk %}">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                    </form>
+                    {% endif %}
+                    {% if book.available %}
+                    <form method="post" action="{% url 'book_book' book.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success mt-2">Book</button>
+                    </form>
+                    {% else %}
+                    <h4 class="text-danger mt-2">Unavailable</h4>
+                    {% endif %}
+                </div>
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 {% endblock %}

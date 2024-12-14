@@ -1,16 +1,27 @@
 {% extends 'base.html' %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Welcome to My Library{% endblock %}
 
 {% block content %}
-<h2 class="my-4">Welcome to the Library Management System</h2>
-
-<p>This Library Management System allows users to browse and manage a collection of books. Key features include:</p>
-<ul>
-    <li>Viewing available books with details such as title, author, and publication date.</li>
-    <li>Authenticated users can book available books and add comments.</li>
-    <li>Library managers have additional privileges to add, update, and delete books from the inventory.</li>
-</ul>
-
-<p>To get started, please register or log in if you already have an account. Enjoy exploring our collection!</p>
+<div class="jumbotron text-center">
+    <h1 class="display-4">Welcome to My Library</h1>
+    <p class="lead">The Book Rental Platform That Connects Readers!</p>
+    <hr class="my-4">
+    <p>At My Library, we’re redefining the way you experience books. Dive into a world of stories, knowledge, and inspiration without the need to buy and clutter your shelves. Our innovative platform allows book lovers like you to discover, rent, and share books with a community of avid readers.</p>
+    <h3>How It Works:</h3>
+    <ul class="text-left">
+        <li><strong>Explore Our Collection:</strong> Browse through an extensive library of books across genres – from gripping mysteries and timeless classics to self-help guides and thrilling adventures.</li>
+        <li><strong>Choose and Rent:</strong> Select the book that catches your eye, rent it, and have it delivered to your doorstep or access it in the format that suits you.</li>
+        <li><strong>Read and Review:</strong> Immerse yourself in the story, and when you’re done, leave a comment sharing your impressions and rate the book on a scale of 1 to 5. Your thoughts will help future readers make their choice.</li>
+        <li><strong>Return and Repeat:</strong> Once you’ve enjoyed your rented book, return it so others can experience the magic too. Then, pick your next read and continue your journey through our ever-growing library!</li>
+    </ul>
+    <h3>Why Choose My Library?</h3>
+    <ul class="text-left">
+        <li><strong>Affordable Access:</strong> Enjoy your favorite books without the high costs of buying.</li>
+        <li><strong>Community Engagement:</strong> Connect with fellow readers through reviews and shared experiences.</li>
+        <li><strong>Sustainability:</strong> Reduce waste and promote a circular economy by reusing books.</li>
+    </ul>
+    <p>Join a community where books don’t just sit on shelves but are continuously passed on to inspire, educate, and entertain. Whether you’re a passionate bibliophile or a casual reader, My Library is here to fuel your love for reading, one rented book at a time.</p>
+    <a class="btn btn-primary btn-lg" href="{% url 'home' %}" role="button">Explore Library</a>
+</div>
 {% endblock %}

@@ -1,4 +1,3 @@
-from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
@@ -10,6 +9,7 @@ from django.views import View
 from django.views.generic import TemplateView, ListView, CreateView, DetailView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 
 
 def index_view(request):
@@ -43,7 +43,13 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['books'] = Book.objects.all()
+        query = self.request.GET.get('q')
+        if query:
+            context['books'] = Book.objects.filter(
+                Q(title__icontains=query) | Q(author__icontains=query) | Q(isbn__icontains=query)
+            )
+        else:
+            context['books'] = Book.objects.all()
         context['user_books'] = self.request.user.profile.books.all() if hasattr(self.request.user, 'profile') else []
         return context
 

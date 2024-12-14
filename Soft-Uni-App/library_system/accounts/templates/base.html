@@ -10,15 +10,23 @@
     <style>
         body {
             padding-top: 60px;
+            background-color: #f8f9fa;
         }
         .container {
             max-width: 1000px;
+        }
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .jumbotron {
+            background-color: #e9ecef;
+            padding: 2rem 1rem;
         }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-        <a class="navbar-brand" href="#">My App</a>
+        <a class="navbar-brand" href="{% url 'index' %}">My Library</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -32,11 +40,11 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'book_list' %}">Inventory</a></li>
                 {% endif %}
                 <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
-            {% else %}
+                {% else %}
                 <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
-            {% endif %}
+                {% endif %}
             </ul>
         </div>
     </nav>

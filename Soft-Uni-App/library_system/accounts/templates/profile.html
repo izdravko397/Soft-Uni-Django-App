@@ -3,35 +3,57 @@
 {% block title %}Profile{% endblock %}
 
 {% block content %}
-<h2>Profile</h2>
-<p>Username: {{ user.username }}</p>
-<p>Role: {% if user.is_library_manager %}Library Manager{% else %}Customer{% endif %}</p>
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">Profile</h2>
+        </div>
+        <div class="card-body">
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Role:</strong> {% if user.is_library_manager %}Library Manager{% else %}Customer{% endif %}</p>
+        </div>
+    </div>
 
-{% if user.is_library_manager %}
-    <h3>Book Management</h3>
-    <ul>
-        <li><a href="{% url 'book_list' %}">View Inventory</a></li>
-        <li><a href="{% url 'book_create' %}">Add New Book</a></li>
-    </ul>
-{% endif %}
+    {% if user.is_library_manager %}
+    <div class="card mt-4">
+        <div class="card-header bg-secondary text-white">
+            <h3 class="mb-0">Book Management</h3>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                <li class="list-group-item"><a href="{% url 'book_list' %}" class="btn btn-link">View Inventory</a></li>
+                <li class="list-group-item"><a href="{% url 'book_create' %}" class="btn btn-link">Add New Book</a></li>
+            </ul>
+        </div>
+    </div>
+    {% endif %}
 
-<h3>Booked Books</h3>
-<ul>
-    {% for book in user.profile.books.all %}
-    <li>
-        {{ book.title }} by {{ book.author }}
-        <a href="{% url 'book_detail' book.pk %}" class="btn btn-secondary">Add Comment</a>
-        {% if book.available %}
-            <span>(read and returned)</span>
-        {% else %}
-            <form action="{% url 'book_return' book.pk %}" method="post" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-warning">Return Book</button>
-            </form>
-        {% endif %}
-    </li>
-    {% empty %}
-    <li>No books booked yet.</li>
-    {% endfor %}
-</ul>
+    <div class="card mt-4">
+        <div class="card-header bg-info text-white">
+            <h3 class="mb-0">Booked Books</h3>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                {% for book in user.profile.books.all %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>{{ book.title }} by {{ book.author }}</span>
+                    <div>
+                        <a href="{% url 'book_detail' book.pk %}" class="btn btn-outline-secondary btn-sm">Add Comment</a>
+                        {% if book.available %}
+                            <span class="badge badge-success ml-2">Read and Returned</span>
+                        {% else %}
+                            <form action="{% url 'book_return' book.pk %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-warning btn-sm">Return Book</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </li>
+                {% empty %}
+                <li class="list-group-item">No books booked yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
 {% endblock %}
