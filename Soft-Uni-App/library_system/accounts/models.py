@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
 from django.conf import settings
+from .validators import validate_published_date, validate_isbn
 
 class CustomUser(AbstractUser):
     is_library_manager = models.BooleanField(default=False)
@@ -9,8 +10,12 @@ class CustomUser(AbstractUser):
 class Book(models.Model):
     title = models.CharField(max_length=255)
     author = models.CharField(max_length=255)
-    published_date = models.DateField()
-    isbn = models.CharField(max_length=13, unique=True)
+    published_date = models.DateField(validators=[validate_published_date])
+    isbn = models.CharField(max_length=13,
+     unique=True,
+     help_text='13 digits',
+     validators=[validate_isbn],
+     )
     available = models.BooleanField(default=True)
 
     def __str__(self):
